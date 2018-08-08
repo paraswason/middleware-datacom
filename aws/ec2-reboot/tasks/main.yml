@@ -1,0 +1,14 @@
+---
+# tasks file for ansible-role-reboot-and-wait-for
+
+- name: reboot
+  become: yes
+  become_user: root
+  command: shutdown -r now "Reboot triggered by Ansible"
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+- name: waitfor server to come back
+  local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH delay=10
+  become: false
