@@ -1,0 +1,57 @@
+---
+- hosts : ec2-instances
+#  sudo: True
+  gather_facts: True
+  vars:
+    origin_account_id: "074368712936"
+    delegate_account_id: "011415933149"
+    delegate_role_name: UDMDelegatedAdmin
+    aws_region: ap-southeast-2
+  tasks: 
+    - name: Install epel-release
+      yum: name=epel-release state=present
+      become: true
+      become_user: root
+
+    - name: Install Python PIP
+      yum: name=python-pip state=present
+      become: true
+      become_user: root
+
+    - name: Install boto
+      command: /usr/local/bin/pip install boto botocore boto3
+      become: true
+      become_user: root
+
+    - name: Install AWS CLI
+      command: /usr/local/bin/pip install --upgrade awscli
+      become: true
+      become_user: root
+
+    - name: Creates .aws directory
+      file:
+        path: ~/.aws
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: 0755 
+      become: true 
+      become_user: ec2-user
+
+    - name: Configure AWS Credentials
+      template:
+        src: /home/ansible/aws/vars/config
+        dest: ~/.aws
+        owner: ec2-user
+        group: ec2-user
+        mode: 0600
+
+    - name: Configure AWS Credentials
+      template:
+        src: /home/ansible/aws/vars/credentials
+        dest: ~/.aws
+        owner: ec2-user
+        group: ec2-user
+        mode: 0600
+
+
