@@ -8,23 +8,18 @@
     delegate_role_name: UDMDelegatedAdmin
     aws_region: ap-southeast-2
   tasks: 
-    - name: Install epel-release
-      yum: name=epel-release state=present
-      become: true
-      become_user: root
-
     - name: Install Python PIP
       yum: name=python-pip state=present
       become: true
       become_user: root
 
     - name: Install boto
-      command: /usr/local/bin/pip install boto botocore boto3
+      pip: name=boto,botocore,boto3 state=present 
       become: true
       become_user: root
 
     - name: Install AWS CLI
-      command: /usr/local/bin/pip install --upgrade awscli
+      command: pip install --upgrade awscli
       become: true
       become_user: root
 
@@ -38,7 +33,7 @@
       become: true 
       become_user: ec2-user
 
-    - name: Configure AWS Credentials
+    - name: Configure AWS Config
       template:
         src: /home/ansible/aws/vars/config
         dest: ~/.aws
